@@ -1,0 +1,62 @@
+# Terraform files
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+*.tfplan
+*.tfplan.*
+.terraform/
+.terraform.lock.hcl
+.terraform.lock.hcl.backup
+.terraform.tfstate.lock.info
+terraform.tfstate.d/
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform module files
+.terraform.d/
+terraform.rc
+.terraformrc
+
+# Terragrunt files
+.terragrunt-cache/
+terragrunt.hcl.backup
+.terragrunt/
+
+# Variable files with sensitive data
+terraform.tfvars
+*.auto.tfvars
+
+# Generated files
+generated.tf
+import.tf.backup
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# GitHub Actions
+.github/workflows/*.yml.backup
+.github/workflows/*.yaml.backup

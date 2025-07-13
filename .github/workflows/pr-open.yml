@@ -1,0 +1,150 @@
+name: PR Terraform Validation
+
+on:
+    pull_request:
+        branches: [ main ]
+        paths:
+            - 'terraform/modules/**'
+
+jobs:
+  find-modules:
+    runs-on: ubuntu-24.04
+    outputs:
+      modules: ${{ steps.find.outputs.modules }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Find Terraform modules
+        id: find
+        run: |
+          modules=$(find terraform/modules -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | jq -R -s -c 'split("\n")[:-1]')
+          echo "Found modules: $modules"
+          echo "modules=$modules" >> $GITHUB_OUTPUT
+
+  terraform-validation:
+    runs-on: ubuntu-24.04
+    env:
+      TF_LOG: DEBUG
+    needs: find-modules
+    if: ${{ fromJson(needs.find-modules.outputs.modules)[0] != null }}
+    strategy:
+      fail-fast: false
+      matrix:
+        module: ${{ fromJson(needs.find-modules.outputs.modules) }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.12.2"
+      
+      - name: Create terraform.tfvars for module
+        run: |
+          MODULE_DIR="terraform/modules/${{ matrix.module }}"
+          TFVARS_FILE="$MODULE_DIR/terraform.tfvars"
+          
+          echo "Creating terraform.tfvars for module: ${{ matrix.module }}"
+          
+          # Create tfvars file based on module type
+          case "${{ matrix.module }}" in
+            "initial-bcgov-tf-setup")
+              cat > "$TFVARS_FILE" << EOF
+          repo_name = "bcgov/quickstart-aws-helpers"
+          aws_account_number = "123456789012"
+          aws_license_plate = "abc123"
+          target_env = "dev"
+          aws_region = "ca-central-1"
+          EOF
+              ;;
+            "networking")
+              cat > "$TFVARS_FILE" << EOF
+          target_env = "dev"
+          EOF
+              ;;
+            "s3-secure-bucket")
+              cat > "$TFVARS_FILE" << EOF
+          bucket_name = "test-secure-bucket-${{ github.run_id }}"
+          EOF
+              ;;
+            "api-gateway")
+              cat > "$TFVARS_FILE" << EOF
+          api_name = "test-api-gateway"
+          subnet_ids = ["subnet-12345678", "subnet-87654321"]
+          security_group_ids = ["sg-12345678"]
+          EOF
+              ;;
+            "cloudfront")
+              cat > "$TFVARS_FILE" << EOF
+          app_name = "test-app"
+          repo_name = "bcgov/quickstart-aws-helpers"
+          distribution_type = "s3"
+          s3_origin_domain_name = "test-bucket.s3.amazonaws.com"
+          s3_origin_id = "test-s3-origin"
+          s3_origin_access_identity_path = "origin-access-identity/cloudfront/ABCDEFG1234567"
+          EOF
+              ;;
+            "cloudfront-oai")
+              cat > "$TFVARS_FILE" << EOF
+          comment = "Test OAI for validation"
+          EOF
+              ;;
+            "waf")
+              cat > "$TFVARS_FILE" << EOF
+          name = "test-waf"
+          description = "Test WAF for validation"
+          scope = "CLOUDFRONT"
+          EOF
+              ;;
+            "s3-cloudfront-logs")
+              cat > "$TFVARS_FILE" << EOF
+          bucket_name = "test-cloudfront-logs-${{ github.run_id }}"
+          EOF
+              ;;
+            "common")
+              cat > "$TFVARS_FILE" << EOF
+          target_env = "dev"
+          app_env = "test"
+          app_name = "test-app"
+          repo_name = "bcgov/quickstart-aws-helpers"
+          EOF
+              ;;
+            *)
+              echo "No specific tfvars template for module: ${{ matrix.module }}"
+              touch "$TFVARS_FILE"
+              ;;
+          esac
+          
+          echo "Created tfvars file for ${{ matrix.module }}:"
+          cat "$TFVARS_FILE"
+      - name: Format Generated tfvars
+        run: terraform fmt terraform.tfvars
+        working-directory: terraform/modules/${{ matrix.module }}
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        working-directory: terraform/modules/${{ matrix.module }}
+      
+      - name: Terraform Init
+        run: terraform init -backend=false
+        working-directory: terraform/modules/${{ matrix.module }}
+      
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: terraform/modules/${{ matrix.module }}
+      
+      - name: Cleanup terraform.tfvars
+        if: always()
+        run: |
+          rm -f terraform/modules/${{ matrix.module }}/terraform.tfvars
+  results:
+    name: PR Results
+    needs: terraform-validation
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - if: contains(needs.*.result, 'failure')||contains(needs.*.result, 'canceled')
+        run: echo "At least one job has failed." && exit 1
+      - run: echo "Success!"
