@@ -10,12 +10,6 @@ variable "force_destroy" {
   default     = true
 }
 
-variable "enable_encryption" {
-  description = "Enable server-side encryption"
-  type        = bool
-  default     = true
-}
-
 variable "encryption_algorithm" {
   description = "Server-side encryption algorithm"
   type        = string

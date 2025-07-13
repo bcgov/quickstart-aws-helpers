@@ -58,6 +58,7 @@ jobs:
           aws_license_plate = "abc123"
           target_env = "dev"
           aws_region = "ca-central-1"
+          enable_github_automation = false
           EOF
               ;;
             "networking")
