@@ -8,7 +8,7 @@ on:
 
 jobs:
   find-modules:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       modules: ${{ steps.find.outputs.modules }}
     steps:
@@ -23,7 +23,9 @@ jobs:
           echo "modules=$modules" >> $GITHUB_OUTPUT
 
   terraform-validation:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    env:
+      TF_LOG_LEVEL: DEBUG
     needs: find-modules
     if: ${{ fromJson(needs.find-modules.outputs.modules)[0] != null }}
     strategy:
