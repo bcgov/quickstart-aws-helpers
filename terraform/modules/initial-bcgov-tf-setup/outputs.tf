@@ -92,9 +92,9 @@ output "manual_setup_instructions" {
 output "github_automation_status" {
   description = "Status of GitHub automation"
   value = {
-    enabled                = var.enable_github_automation
-    environment_created    = var.enable_github_automation ? "✅ Environment '${var.target_env}' created" : "❌ Manual setup required"
-    secrets_created        = var.enable_github_automation ? "✅ All secrets configured automatically" : "❌ Manual secrets configuration required"
-    github_token_required  = var.enable_github_automation ? "⚠️  GITHUB_TOKEN environment variable required" : "Not required"
+    enabled               = var.enable_github_automation
+    environment_created   = var.enable_github_automation ? "✅ Environment '${var.target_env}' created" : "❌ Manual setup required"
+    secrets_created       = var.enable_github_automation ? "✅ All secrets configured automatically" : "❌ Manual secrets configuration required"
+    github_token_required = var.enable_github_automation ? "⚠️  GITHUB_TOKEN environment variable required" : "Not required"
   }
 }
