@@ -8,10 +8,8 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
-    github = {
-      source  = "integrations/github"
-      version = "~> 6.0"
-    }
+    # GitHub provider is conditionally required based on enable_github_automation variable
+    # When using this module, pass the github provider configuration only if needed
   }
 }
 

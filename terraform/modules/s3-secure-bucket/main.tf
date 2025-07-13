@@ -7,7 +7,6 @@ resource "aws_s3_bucket" "this" {
 
 # Server-side encryption configuration
 resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
-  count  = var.enable_encryption ? 1 : 0
   bucket = aws_s3_bucket.this.id
 
   rule {

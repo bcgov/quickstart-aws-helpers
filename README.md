@@ -33,23 +33,6 @@ quickstart-aws-helpers/
 
 ## 🚀 Getting Started
 
-### Using GitHub Actions
-
-To use the reusable GitHub Actions in your project:
-
-```yaml
-# In your .github/workflows/main.yml
-jobs:
-  deploy:
-    uses: bcgov/quickstart-aws-helpers/.github/workflows/deploy-to-aws.yml@main
-    with:
-      environment: production
-      aws-region: us-west-2
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-```
-
 ### Using Terraform Modules
 
 To use the Terraform modules in your infrastructure:
@@ -78,19 +61,12 @@ module "secure_bucket" {
   source = "git::https://github.com/bcgov/quickstart-aws-helpers.git//terraform/modules/s3-secure-bucket?ref=s3-secure-bucket/v1.0.0"
   
   bucket_name        = "my-secure-bucket"
-  enable_encryption  = true
   tags               = local.common_tags
 }
 ```
 
 ## 📚 Available Components
 
-### GitHub Actions
-- [x] **[PR Terraform Validation](.github/workflows/pr-open.yml)** - Automated validation of Terraform modules on pull requests
-- [ ] **AWS Deployment Workflow** - Standardized deployment to AWS
-- [ ] **Security Scanning** - Code and infrastructure security checks
-- [ ] **Multi-Environment Deployment** - Deploy to dev/staging/prod
-- [ ] **Rollback Workflow** - Automated rollback capabilities
 
 ### Terraform Modules
 
@@ -108,30 +84,6 @@ module "secure_bucket" {
 - [x] **[s3-secure-bucket](terraform/modules/s3-secure-bucket/)** - Hardened S3 bucket with encryption, public access blocking, and lifecycle policies
 - [x] **[s3-cloudfront-logs](terraform/modules/s3-cloudfront-logs/)** - S3 bucket specifically configured for CloudFront access logs
 - [x] **[waf](terraform/modules/waf/)** - Web Application Firewall v2 with rate limiting, geo-blocking, and common attack protection
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
-
-- How to submit changes
-- Coding standards
-- Testing requirements
-- Documentation standards
-
-### Development Workflow
-
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
-3. **Commit** your changes (`git commit -m 'Add some amazing feature'`)
-4. **Push** to the branch (`git push origin feature/amazing-feature`)
-5. **Open** a Pull Request
-
-## 📖 Documentation
-
-- [GitHub Actions Usage](docs/github-actions.md)
-- [Terraform Modules Guide](docs/terraform-modules.md)
-- [Best Practices](docs/best-practices.md)
-- [Troubleshooting](docs/troubleshooting.md)
 
 ## 🏷️ Versioning
 
@@ -174,9 +126,7 @@ If you encounter any issues or have questions:
 - [AWS Documentation](https://docs.aws.amazon.com/)
 - [Terraform Documentation](https://www.terraform.io/docs/)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
-- [BC Government DevOps Platform](https://digital.gov.bc.ca/cloud/services/public/platform-services/)
+- [BC Government DevOps Platform](https://developer.gov.bc.ca/docs/default/component/public-cloud-techdocs/aws/)
 
 ---
-
 **Maintained by:** BC Government Natural Resource Sector  
-**Last Updated:** July 2025

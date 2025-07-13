@@ -1,12 +1,6 @@
 # GitHub Repository Management
 # This creates GitHub environments and secrets automatically
 
-# Configure the GitHub provider
-provider "github" {
-  # GitHub token should be set via GITHUB_TOKEN environment variable
-  # or through other authentication methods
-}
-
 # Split repo_name into owner and repository
 locals {
   repo_parts = split("/", var.repo_name)

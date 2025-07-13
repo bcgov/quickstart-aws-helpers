@@ -7,7 +7,6 @@ module "logs_bucket" {
 
   bucket_name                = var.bucket_name
   force_destroy              = true
-  enable_encryption          = true
   encryption_algorithm       = "AES256"
   enable_public_access_block = true
   enable_versioning          = false
