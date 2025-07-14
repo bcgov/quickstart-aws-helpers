@@ -28,7 +28,6 @@ quickstart-aws-helpers/
 │       └── waf/                 # Web Application Firewall v2
 ├── scripts/                # Utility scripts
 │   └── initial-bcgov-setup.sh  # Initial BC Gov AWS setup script
-├── docs/                   # Documentation (planned)
 └── LICENSE                 # Apache License 2.0
 ```
 
@@ -41,14 +40,14 @@ To use the Terraform modules in your infrastructure:
 ```hcl
 # Using the networking module
 module "networking" {
-  source = "git::https://github.com/bcgov/quickstart-aws-helpers.git//terraform/modules/networking?ref=networking/v1.0.0"
+  source = "git::https://github.com/bcgov/quickstart-aws-helpers.git//terraform/modules/networking?ref=v0.0.5"
   
   target_env = "dev"
 }
 
 # Using the secure S3 bucket module
 module "secure_bucket" {
-  source = "git::https://github.com/bcgov/quickstart-aws-helpers.git//terraform/modules/s3-secure-bucket?ref=s3-secure-bucket/v1.0.0"
+  source = "git::https://github.com/bcgov/quickstart-aws-helpers.git//terraform/modules/s3-secure-bucket?ref=v0.0.5"
   
   bucket_name        = "my-secure-bucket"
   tags               = local.common_tags
@@ -76,28 +75,6 @@ module "secure_bucket" {
 - [x] **[s3-cloudfront-logs](terraform/modules/s3-cloudfront-logs/)** - S3 bucket specifically configured for CloudFront access logs
 - [x] **[waf](terraform/modules/waf/)** - Web Application Firewall v2 with rate limiting, geo-blocking, and common attack protection
 
-## 🏷️ Versioning
-
-This project uses module-specific [Semantic Versioning](https://semver.org/) with the following format:
-- `<module-name>/v<major>.<minor>.<patch>`
-
-### Available Module Versions
-
-#### Core Infrastructure Modules
-- `common/v1.0.0` - Shared variables and naming conventions for BC Gov standards
-- `networking/v1.0.0` - VPC and subnet data sources with standardized naming
-
-#### Application Layer Modules
-- `api-gateway/v1.0.0` - API Gateway v2 with VPC link integration
-- `cloudfront/v1.0.0` - CloudFront distribution with S3/ALB origins and WAF support
-- `cloudfront-oai/v1.0.0` - CloudFront Origin Access Identity for S3 security
-
-#### Storage & Security Modules
-- `s3-secure-bucket/v1.0.0` - Hardened S3 bucket with encryption and access controls
-- `s3-cloudfront-logs/v1.0.0` - S3 bucket configured for CloudFront logging
-- `waf/v1.0.0` - Web Application Firewall v2 with rate limiting and protection rules
-
-For all available versions, see the [tags on this repository](https://github.com/bcgov/quickstart-aws-helpers/tags).
 
 ## 📄 License
 
@@ -107,9 +84,8 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 If you encounter any issues or have questions:
 
-1. Check the [documentation](docs/)
-2. Search [existing issues](https://github.com/bcgov/quickstart-aws-helpers/issues)
-3. Create a [new issue](https://github.com/bcgov/quickstart-aws-helpers/issues/new) with detailed information
+1. Search [existing issues](https://github.com/bcgov/quickstart-aws-helpers/issues)
+2. Create a [new issue](https://github.com/bcgov/quickstart-aws-helpers/issues/new) with detailed information
 
 ## 🔗 Related Resources
 
