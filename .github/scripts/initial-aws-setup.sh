@@ -637,6 +637,7 @@ create_github_environment_and_secrets() {
     local aws_region="$5"
     local ecr_repo_name="$6"
     local aws_account_number="$7"
+    local terraform_state_bucket="$8"
     
     print_status "Creating GitHub environment: $target_env"
     
@@ -679,17 +680,39 @@ EOF
         --env "$target_env" \
         --body "$aws_license_plate"
     
-    
     gh secret set AWS_ACCOUNT_NUMBER \
         --repo "$repo_name" \
         --env "$target_env" \
         --body "$aws_account_number"
     
+    gh secret set AWS_REGION \
+        --repo "$repo_name" \
+        --env "$target_env" \
+        --body "$aws_region"
+    
+    gh secret set ECR_REPOSITORY \
+        --repo "$repo_name" \
+        --env "$target_env" \
+        --body "$ecr_repo_name"
+    
+    gh secret set TARGET_ENV \
+        --repo "$repo_name" \
+        --env "$target_env" \
+        --body "$target_env"
+    
+    gh secret set TERRAFORM_STATE_BUCKET \
+        --repo "$repo_name" \
+        --env "$target_env" \
+        --body "$terraform_state_bucket"
     
     print_success "Secrets added to environment $target_env:"
     echo "  - AWS_DEPLOY_ROLE_ARN"
     echo "  - AWS_LICENSE_PLATE"
     echo "  - AWS_ACCOUNT_NUMBER"
+    echo "  - AWS_REGION"
+    echo "  - ECR_REPOSITORY"
+    echo "  - TARGET_ENV"
+    echo "  - TERRAFORM_STATE_BUCKET"
 }
 
 # Function to validate GitHub repository access
@@ -808,7 +831,7 @@ main() {
                 if check_github_permissions "$REPO_NAME"; then
                     echo
                     print_status "Creating GitHub environment and adding secrets..."
-                    create_github_environment_and_secrets "$REPO_NAME" "$TARGET_ENV" "$ROLE_ARN" "$AWS_LICENSE_PLATE" "$AWS_REGION" "$ECR_REPO_NAME" "$AWS_ACCOUNT_NUMBER"
+                    create_github_environment_and_secrets "$REPO_NAME" "$TARGET_ENV" "$ROLE_ARN" "$AWS_LICENSE_PLATE" "$AWS_REGION" "$ECR_REPO_NAME" "$AWS_ACCOUNT_NUMBER" "$TERRAFORM_STATE_BUCKET"
                     echo
                     print_success "GitHub environment and secrets configured successfully!"
                 else
@@ -854,6 +877,7 @@ main() {
         echo "   - ECR_REPOSITORY: $ECR_REPO_NAME"
         echo "   - AWS_ACCOUNT_NUMBER: $AWS_ACCOUNT_NUMBER"
         echo "   - TARGET_ENV: $TARGET_ENV"
+        echo "   - TERRAFORM_STATE_BUCKET: $TERRAFORM_STATE_BUCKET"
         echo
         echo "3. You can add these secrets via:"
         echo "   - Repository Settings > Environments > $TARGET_ENV > Environment secrets"
@@ -861,6 +885,10 @@ main() {
         echo "     gh secret set AWS_DEPLOY_ROLE_ARN --env $TARGET_ENV --body \"$ROLE_ARN\""
         echo "     gh secret set AWS_LICENSE_PLATE --env $TARGET_ENV --body \"$AWS_LICENSE_PLATE\""
         echo "     gh secret set AWS_ACCOUNT_NUMBER --env $TARGET_ENV --body \"$AWS_ACCOUNT_NUMBER\""
+        echo "     gh secret set AWS_REGION --env $TARGET_ENV --body \"$AWS_REGION\""
+        echo "     gh secret set ECR_REPOSITORY --env $TARGET_ENV --body \"$ECR_REPO_NAME\""
+        echo "     gh secret set TARGET_ENV --env $TARGET_ENV --body \"$TARGET_ENV\""
+        echo "     gh secret set TERRAFORM_STATE_BUCKET --env $TARGET_ENV --body \"$TERRAFORM_STATE_BUCKET\""
         echo
     else
         print_status "GitHub Configuration Complete!"
