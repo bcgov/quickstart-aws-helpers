@@ -4,7 +4,7 @@
 
 1. BCGov AWS account/namespace, make sure you have access provided from PO, [follow this link](https://dev.developer.gov.bc.ca/docs/default/component/public-cloud-techdocs/aws/LZA/design-build-deploy/user-management/#managing-security-group-membership)
 2. AWS CLI installed.
-3. Github CLI (optionally installed).
+3. GitHub CLI (optionally installed).
 
 ## Execute the bash script for the initial setup for each AWS environment (dev, test, prod)
 1. [Login to console via IDIR MFA](https://bcgov.awsapps.com/start/#/?tab=accounts)
