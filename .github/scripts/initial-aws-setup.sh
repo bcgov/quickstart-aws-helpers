@@ -432,8 +432,7 @@ EOF
         --no-cli-pager
     
     print_success "Policy attached to role"
-    
-   ROLE_ARN=$(echo "$role_arn" | tr -d '\n\r' | xargs)
+    ROLE_ARN=$(echo "$role_arn" | tr -d '\n\r' | xargs)
 }
 
 # Function to create S3 bucket for Terraform state
