@@ -433,11 +433,8 @@ EOF
     
     print_success "Policy attached to role"
     
-    # Write role ARN to a temporary file instead of echoing it
-    local role_arn_file
-    role_arn_file=$(create_temp_file)
-    echo "$role_arn" > "$role_arn_file"
-    echo "$role_arn_file"
+    # Return role ARN directly
+    echo "$role_arn"
 }
 
 # Function to create S3 bucket for Terraform state
@@ -803,11 +800,7 @@ main() {
     echo
     
     # Create IAM role
-    local role_arn_file
-    role_arn_file=$(create_iam_role "$ROLE_NAME" "$REPO_NAME" "$AWS_ACCOUNT_NUMBER" "$POLICY_NAME")
-    
-    # Read the role ARN from the temporary file
-    ROLE_ARN=$(cat "$role_arn_file")
+    ROLE_ARN=$(create_iam_role "$ROLE_NAME" "$REPO_NAME" "$AWS_ACCOUNT_NUMBER" "$POLICY_NAME")
     echo
     
     # Create ECR repository
