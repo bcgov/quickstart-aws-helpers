@@ -12,7 +12,32 @@
 # - S3 bucket for Terraform remote state with versioning and encryption
 # - ECR repository with lifecycle policies
 
-set -e  # Exit on any error
+set -e          # Exit on any error
+set -u          # Exit on unset variables
+set -o pipefail # Exit on pipeline errors
+
+# Array to track temporary files for cleanup
+TEMP_FILES=()
+
+# Function to create temporary file and track it
+create_temp_file() {
+    local temp_file
+    temp_file=$(mktemp)
+    TEMP_FILES+=("$temp_file")
+    echo "$temp_file"
+}
+
+# Cleanup function
+cleanup() {
+    local exit_code=$?
+    if [[ ${#TEMP_FILES[@]} -gt 0 ]]; then
+        rm -f "${TEMP_FILES[@]}" 2>/dev/null || true
+    fi
+    exit $exit_code
+}
+
+# Set trap to cleanup on exit
+trap cleanup EXIT INT TERM
 
 # Color codes for output
 RED='\033[0;31m'
@@ -199,7 +224,9 @@ create_iam_policy() {
     print_status "Creating IAM policy: $policy_name"
     
     # Create policy document
-    cat > /tmp/terraform-deploy-policy.json << 'EOF'
+    local policy_file
+    policy_file=$(create_temp_file)
+    cat > "$policy_file" << 'EOF'
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -316,16 +343,13 @@ EOF
         # Create new policy
         POLICY_ARN=$(aws iam create-policy \
             --policy-name "$policy_name" \
-            --policy-document file:///tmp/terraform-deploy-policy.json \
+            --policy-document "file://$policy_file" \
             --description "Policy for GitHub Actions to deploy infrastructure via Terraform" \
             --query 'Policy.Arn' \
             --output text --no-cli-pager)
         
         print_success "Policy created: $POLICY_ARN"
     fi
-    
-    # Clean up temporary file
-    rm -f /tmp/terraform-deploy-policy.json
 }
 
 # Function to create IAM role
@@ -338,7 +362,9 @@ create_iam_role() {
     print_status "Creating IAM role: $role_name"
     
     # Create trust policy document
-    cat > /tmp/trust-policy.json << EOF
+    local trust_policy_file
+    trust_policy_file=$(create_temp_file)
+    cat > "$trust_policy_file" << EOF
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -371,7 +397,7 @@ EOF
         # Create new role
         role_arn=$(aws iam create-role \
             --role-name "$role_name" \
-            --assume-role-policy-document file:///tmp/trust-policy.json \
+            --assume-role-policy-document "file://$trust_policy_file" \
             --description "Role for GitHub Actions to deploy infrastructure via Terraform" \
             --query 'Role.Arn' \
             --output text --no-cli-pager)
@@ -407,11 +433,11 @@ EOF
     
     print_success "Policy attached to role"
     
-    # Clean up temporary file
-    rm -f /tmp/trust-policy.json
-    
     # Write role ARN to a temporary file instead of echoing it
-    echo "$role_arn" > /tmp/role_arn.txt
+    local role_arn_file
+    role_arn_file=$(create_temp_file)
+    echo "$role_arn" > "$role_arn_file"
+    echo "$role_arn_file"
 }
 
 # Function to create S3 bucket for Terraform state
@@ -469,7 +495,9 @@ create_terraform_state_bucket() {
         --no-cli-pager
     
     # Add bucket policy to restrict access
-    cat > /tmp/bucket-policy.json << EOF
+    local bucket_policy_file
+    bucket_policy_file=$(create_temp_file)
+    cat > "$bucket_policy_file" << EOF
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -494,10 +522,8 @@ EOF
     
 aws s3api put-bucket-policy \
     --bucket "$bucket_name" \
-    --policy file:///tmp/bucket-policy.json \
+    --policy "file://$bucket_policy_file" \
     --no-cli-pager
-
-rm -f /tmp/bucket-policy.json
 
 print_success "S3 bucket $bucket_name created and configured successfully"
 }
@@ -535,7 +561,9 @@ create_ecr_repository() {
     # Create lifecycle policy to manage image retention
     print_status "Setting up lifecycle policy for ECR repository..."
     
-    cat > /tmp/ecr-lifecycle-policy.json << 'EOF'
+    local lifecycle_policy_file
+    lifecycle_policy_file=$(create_temp_file)
+    cat > "$lifecycle_policy_file" << 'EOF'
 {
     "rules": [
         {
@@ -571,12 +599,9 @@ EOF
     # Apply lifecycle policy
     aws ecr put-lifecycle-policy \
         --repository-name "$repo_name" \
-        --lifecycle-policy-text file:///tmp/ecr-lifecycle-policy.json \
+        --lifecycle-policy-text "file://$lifecycle_policy_file" \
         --region "$region" \
         --no-cli-pager > /dev/null
-    
-    # Clean up temporary file
-    rm -f /tmp/ecr-lifecycle-policy.json
     
     print_success "Lifecycle policy applied to ECR repository $repo_name"
     print_status "Policy details:"
@@ -620,7 +645,9 @@ create_github_environment_and_secrets() {
         print_warning "Environment $target_env already exists. Will update secrets."
     else
         # Create environment with proper JSON
-        cat > /tmp/github-env.json << EOF
+        local github_env_file
+        github_env_file=$(create_temp_file)
+        cat > "$github_env_file" << EOF
 {
     "wait_timer": 0,
     "reviewers": [],
@@ -633,11 +660,8 @@ EOF
         
         gh api "repos/$repo_name/environments/$target_env" \
             --method PUT \
-            --input /tmp/github-env.json \
+            --input "$github_env_file" \
             > /dev/null
-        
-        # Clean up temporary file
-        rm -f /tmp/github-env.json
         
         print_success "Environment $target_env created successfully"
     fi
@@ -756,11 +780,11 @@ main() {
     echo
     
     # Create IAM role
-    create_iam_role "$ROLE_NAME" "$REPO_NAME" "$AWS_ACCOUNT_NUMBER" "$POLICY_NAME"
+    local role_arn_file
+    role_arn_file=$(create_iam_role "$ROLE_NAME" "$REPO_NAME" "$AWS_ACCOUNT_NUMBER" "$POLICY_NAME")
     
     # Read the role ARN from the temporary file
-    ROLE_ARN=$(cat /tmp/role_arn.txt)
-    rm -f /tmp/role_arn.txt
+    ROLE_ARN=$(cat "$role_arn_file")
     echo
     
     # Create ECR repository
