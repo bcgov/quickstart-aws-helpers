@@ -1,6 +1,6 @@
 # Quickstart AWS Helpers
 
-A centralized repository for reusable GitHub Actions (GHA) and Terraform code to accelerate AWS-based development and deployment workflows.
+A centralized repository for reusable GitHub Actions (GHA), Terraform code, and scripts to accelerate AWS-based development and deployment workflows.
 
 ## 🎯 Purpose
 
@@ -22,33 +22,37 @@ quickstart-aws-helpers/
 │       ├── cloudfront/          # CloudFront distribution management
 │       ├── cloudfront-oai/      # CloudFront Origin Access Identity
 │       ├── common/              # Shared variables and locals
-│       ├── initial-bcgov-tf-setup/  # Initial BC Gov AWS setup
 │       ├── networking/          # VPC and subnet configurations
 │       ├── s3-cloudfront-logs/  # S3 bucket for CloudFront logs
 │       ├── s3-secure-bucket/    # Secure S3 bucket with encryption
 │       └── waf/                 # Web Application Firewall v2
+├── scripts/                # Utility scripts
+│   └── initial-bcgov-setup.sh  # Initial BC Gov AWS setup script
 ├── docs/                   # Documentation (planned)
 └── LICENSE                 # Apache License 2.0
 ```
 
 ## 🚀 Getting Started
 
+### Using the Initial Setup Script
+
+To set up your BC Government AWS environment:
+
+```bash
+# Run the initial setup script directly from GitHub
+curl -sSL https://raw.githubusercontent.com/bcgov/quickstart-aws-helpers/main/scripts/initial-bcgov-setup.sh | bash -s -- \
+  --repo-name "bcgov/your-repo" \
+  --aws-account-number "123456789012" \
+  --aws-license-plate "abc123" \
+  --target-env "dev" \
+  --aws-region "ca-central-1"
+```
+
 ### Using Terraform Modules
 
 To use the Terraform modules in your infrastructure:
 
 ```hcl
-# Using the initial BC Gov setup module
-module "initial_setup" {
-  source = "git::https://github.com/bcgov/quickstart-aws-helpers.git//terraform/modules/initial-bcgov-tf-setup?ref=initial-bcgov-setup/v1.0.0"
-  
-  repo_name          = "bcgov/your-repo"
-  aws_account_number = "123456789012"
-  aws_license_plate  = "abc123"
-  target_env         = "dev"
-  aws_region         = "ca-central-1"
-}
-
 # Using the networking module
 module "networking" {
   source = "git::https://github.com/bcgov/quickstart-aws-helpers.git//terraform/modules/networking?ref=networking/v1.0.0"
@@ -67,11 +71,12 @@ module "secure_bucket" {
 
 ## 📚 Available Components
 
+### Setup Scripts
+- [x] **[initial-bcgov-setup.sh](scripts/initial-bcgov-setup.sh)** - BC Government AWS account initial setup script for IAM roles, policies, S3 state bucket, and ECR repository
 
 ### Terraform Modules
 
 #### Core Infrastructure
-- [x] **[initial-bcgov-tf-setup](terraform/modules/initial-bcgov-tf-setup/)** - BC Government AWS account initial setup with IAM roles, policies, S3 state bucket, and ECR repository
 - [x] **[common](terraform/modules/common/)** - Shared variables, locals, and standardized naming conventions across modules
 - [x] **[networking](terraform/modules/networking/)** - VPC and subnet data sources with standardized BC Gov naming patterns
 
@@ -93,7 +98,6 @@ This project uses module-specific [Semantic Versioning](https://semver.org/) wit
 ### Available Module Versions
 
 #### Core Infrastructure Modules
-- `initial-bcgov-tf-setup/v1.0.0` - Initial release with IAM roles, S3 state bucket, and ECR repository
 - `common/v1.0.0` - Shared variables and naming conventions for BC Gov standards
 - `networking/v1.0.0` - VPC and subnet data sources with standardized naming
 
@@ -129,4 +133,4 @@ If you encounter any issues or have questions:
 - [BC Government DevOps Platform](https://developer.gov.bc.ca/docs/default/component/public-cloud-techdocs/aws/)
 
 ---
-**Maintained by:** BC Government Natural Resource Sector  
+**Maintained by:** BC Government Natural Resource Sector
