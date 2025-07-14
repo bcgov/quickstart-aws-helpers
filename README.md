@@ -34,26 +34,6 @@ quickstart-aws-helpers/
 
 ## 🚀 Getting Started
 
-### Using the Initial Setup Script
-
-To set up your BC Government AWS environment:
-
-```bash
-
-# Run the initial setup script directly from GitHub after replacing with your account number namespace name and repo name
-curl -sSL https://raw.githubusercontent.com/bcgov/quickstart-aws-helpers/main/.github/scripts/initial-aws-setup.sh | bash -s \
-bcgov/<repo_name> \
-000000000000 \
-abc123 \
-prod \
-tfdeploypolicyqsawsdemo \
-GHA_CI_CD_QS_AWS_DEMO \
-bcgov/qs-aws-demo \
-ca-central-1 \
---create-github-secrets
-
-```
-
 ### Using Terraform Modules
 
 To use the Terraform modules in your infrastructure:
