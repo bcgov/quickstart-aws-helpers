@@ -18,7 +18,7 @@ set -o pipefail # Exit on pipeline errors
 
 # Array to track temporary files for cleanup
 TEMP_FILES=()
-
+ROLE_ARN=""
 # Function to create temporary file and track it
 create_temp_file() {
     local temp_file
@@ -433,8 +433,7 @@ EOF
     
     print_success "Policy attached to role"
     
-    # Return role ARN directly
-    echo "$role_arn"
+   ROLE_ARN=$(echo "$role_arn" | tr -d '\n\r' | xargs)
 }
 
 # Function to create S3 bucket for Terraform state
@@ -646,14 +645,10 @@ create_github_environment_and_secrets() {
         local github_env_file
         github_env_file=$(create_temp_file)
         cat > "$github_env_file" << EOF
-{
-    "wait_timer": 0,
-    "reviewers": [],
-    "deployment_branch_policy": {
-        "protected_branches": false,
-        "custom_branch_policies": true
-    }
-}
+            {
+                "wait_timer": 0,
+                "reviewers": []
+            }
 EOF
         
         gh api "repos/$repo_name/environments/$target_env" \
@@ -665,7 +660,7 @@ EOF
     fi
     
     print_status "Adding secrets to environment: $target_env"
-    
+    print_status "secrets are ${role_arn}, ${aws_license_plate}, ${aws_account_number}, ${aws_region}, ${ecr_repo_name}, ${target_env}, ${terraform_state_bucket}"
     # Add environment-specific secrets
     gh secret set AWS_DEPLOY_ROLE_ARN \
         --repo "$repo_name" \
@@ -800,7 +795,7 @@ main() {
     echo
     
     # Create IAM role
-    ROLE_ARN=$(create_iam_role "$ROLE_NAME" "$REPO_NAME" "$AWS_ACCOUNT_NUMBER" "$POLICY_NAME")
+    create_iam_role "$ROLE_NAME" "$REPO_NAME" "$AWS_ACCOUNT_NUMBER" "$POLICY_NAME"
     echo
     
     # Create ECR repository
