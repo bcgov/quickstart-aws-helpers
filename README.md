@@ -16,18 +16,20 @@ This repository serves as a collection of battle-tested, reusable components tha
 
 ```
 quickstart-aws-helpers/
+├── .github/
+│   └── scripts/            # Setup and utility scripts
+│       └── initial-aws-setup.sh    # Initial BC Gov AWS setup script
 ├── terraform/              # Reusable Terraform modules
 │   └── modules/            # Infrastructure modules
 │       ├── api-gateway/         # API Gateway v2 with VPC integration
 │       ├── cloudfront/          # CloudFront distribution management
 │       ├── cloudfront-oai/      # CloudFront Origin Access Identity
 │       ├── common/              # Shared variables and locals
+│       ├── flyway/              # Database migration with Flyway
 │       ├── networking/          # VPC and subnet configurations
 │       ├── s3-cloudfront-logs/  # S3 bucket for CloudFront logs
 │       ├── s3-secure-bucket/    # Secure S3 bucket with encryption
 │       └── waf/                 # Web Application Firewall v2
-├── scripts/                # Utility scripts
-│   └── initial-bcgov-setup.sh  # Initial BC Gov AWS setup script
 └── LICENSE                 # Apache License 2.0
 ```
 
@@ -57,10 +59,9 @@ module "secure_bucket" {
 ## 📚 Available Components
 
 ### Setup Scripts
-- [x] **[initial-bcgov-setup.sh](scripts/initial-bcgov-setup.sh)** - BC Government AWS account initial setup script for IAM roles, policies, S3 state bucket, and ECR repository
+- [x] **[initial-bcgov-setup.sh](.github/scripts/initial-aws-setup.sh)** - BC Government AWS account initial setup script for IAM roles, policies, S3 state bucket, and ECR repository
 
 ### Terraform Modules
-
 #### Core Infrastructure
 - [x] **[common](terraform/modules/common/)** - Shared variables, locals, and standardized naming conventions across modules
 - [x] **[networking](terraform/modules/networking/)** - VPC and subnet data sources with standardized BC Gov naming patterns
@@ -69,6 +70,7 @@ module "secure_bucket" {
 - [x] **[api-gateway](terraform/modules/api-gateway/)** - API Gateway v2 with VPC link integration for private subnet connectivity
 - [x] **[cloudfront](terraform/modules/cloudfront/)** - CloudFront distribution with S3 and ALB origin support, logging, and WAF integration
 - [x] **[cloudfront-oai](terraform/modules/cloudfront-oai/)** - CloudFront Origin Access Identity for secure S3 access
+- [x] **[flyway](terraform/modules/flyway/)** - Database migration module using Flyway with ECS Fargate tasks
 
 #### Storage & Security
 - [x] **[s3-secure-bucket](terraform/modules/s3-secure-bucket/)** - Hardened S3 bucket with encryption, public access blocking, and lifecycle policies
