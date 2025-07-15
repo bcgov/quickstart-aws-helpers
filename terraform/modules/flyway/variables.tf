@@ -1,6 +1,3 @@
-# Flyway Module Variables
-
-# Required Variables
 variable "app_name" {
   description = "Application name used for resource naming"
   type        = string
@@ -46,7 +43,6 @@ variable "db_password" {
 variable "db_username" {
   description = "Database username (if not using secrets manager)"
   type        = string
-  default     = "postgres"
 }
 
 variable "db_host" {
