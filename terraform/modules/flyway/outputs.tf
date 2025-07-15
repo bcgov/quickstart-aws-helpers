@@ -15,5 +15,5 @@ output "ecs_cluster_id" {
 }
 output "flyway_task_definition_arn" {
   description = "ARN of the Flyway task definition"
-  value       = aws_ecs_task_definition.flyway_task_definition[0].arn
+  value       = var.db_cluster_name != "" ? aws_ecs_task_definition.flyway_task_definition[0].arn : null
 }
