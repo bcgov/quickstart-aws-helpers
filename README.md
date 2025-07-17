@@ -25,7 +25,6 @@ quickstart-aws-helpers/
 │       ├── cloudfront/          # CloudFront distribution management
 │       ├── cloudfront-oai/      # CloudFront Origin Access Identity
 │       ├── common/              # Shared variables and locals
-│       ├── flyway/              # Database migration with Flyway
 │       ├── networking/          # VPC and subnet configurations
 │       ├── s3-cloudfront-logs/  # S3 bucket for CloudFront logs
 │       ├── s3-secure-bucket/    # Secure S3 bucket with encryption
@@ -70,7 +69,6 @@ module "secure_bucket" {
 - [x] **[api-gateway](terraform/modules/api-gateway/)** - API Gateway v2 with VPC link integration for private subnet connectivity
 - [x] **[cloudfront](terraform/modules/cloudfront/)** - CloudFront distribution with S3 and ALB origin support, logging, and WAF integration
 - [x] **[cloudfront-oai](terraform/modules/cloudfront-oai/)** - CloudFront Origin Access Identity for secure S3 access
-- [x] **[flyway](terraform/modules/flyway/)** - Database migration module using Flyway with ECS Fargate tasks
 
 #### Storage & Security
 - [x] **[s3-secure-bucket](terraform/modules/s3-secure-bucket/)** - Hardened S3 bucket with encryption, public access blocking, and lifecycle policies
