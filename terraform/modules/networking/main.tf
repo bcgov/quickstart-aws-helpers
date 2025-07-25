@@ -63,21 +63,6 @@ data "aws_subnets" "data" {
   }
 }
 
-# Individual Subnet Data Sources
-data "aws_subnet" "web" {
-  for_each = toset(data.aws_subnets.web.ids)
-  id       = each.value
-}
-
-data "aws_subnet" "app" {
-  for_each = toset(data.aws_subnets.app.ids)
-  id       = each.value
-}
-
-data "aws_subnet" "data" {
-  for_each = toset(data.aws_subnets.data.ids)
-  id       = each.value
-}
 
 # Security Group Data Sources
 data "aws_security_group" "web" {

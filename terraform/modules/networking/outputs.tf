@@ -49,11 +49,3 @@ output "security_groups" {
   }
 }
 
-output "subnet_details" {
-  description = "Detailed subnet information"
-  value = {
-    web  = data.aws_subnet.web
-    app  = data.aws_subnet.app
-    data = data.aws_subnet.data
-  }
-}
