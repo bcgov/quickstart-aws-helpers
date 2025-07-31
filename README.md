@@ -68,7 +68,6 @@ module "secure_bucket" {
 - [x] **[initial-bcgov-setup.sh](.github/scripts/initial-aws-setup.sh)** - BC Government AWS account initial setup script for IAM roles, policies, S3 state bucket, and ECR repository
 
 ### Terraform Modules
-### Terraform Modules
 #### Core Infrastructure
 - [x] **[common](terraform/modules/common/)** - Shared variables, locals, and standardized naming conventions across modules
 - [x] **[networking](terraform/modules/networking/)** - VPC and subnet data sources with standardized BC Gov naming patterns
