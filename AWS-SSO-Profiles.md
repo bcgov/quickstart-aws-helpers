@@ -25,7 +25,7 @@ aws configure sso --profile <environment>-admin
 aws configure set sso_session bcgov-<environment>-admin --profile <environment>-admin && \
 aws configure set sso_start_url https://bcgov.awsapps.com/start/# --profile <environment>-admin && \
 aws configure set sso_region ca-central-1 --profile <environment>-admin && \
-aws configure set sso_account_id ████████████ --profile <environment>-admin && \
+aws configure set sso_account_id '<ACCOUNT_ID>' --profile <environment>-admin && \
 aws configure set sso_role_name BCGOV_LZA_Admin --profile <environment>-admin && \
 aws configure set region ca-central-1 --profile <environment>-admin && \
 aws configure set output json --profile <environment>-admin
@@ -39,7 +39,7 @@ aws configure set output json --profile <environment>-admin
 │ SSO session name    │ bcgov-<environment>-admin            │
 │ SSO start URL       │ https://bcgov.awsapps.com/start/#    │
 │ SSO region          │ ca-central-1                         │
-│ Account ID          │ ████████████                         │
+│ Account ID          │ '<ACCOUNT_ID>'                       │
 │ Role                │ BCGOV_LZA_Admin                      │
 │ Default region      │ ca-central-1                         │
 │ Output format       │ json                                 │
