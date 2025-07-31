@@ -57,9 +57,17 @@ module "secure_bucket" {
 
 ## 📚 Available Components
 
+
+### GitHub Actions
+- [x] **[AWS-Deploy](./AWS-DEPLOY.md)** - Guide to setup GHA CI/CD
+
+### Local profiles
+- [x] **[AWS-SSO](./AWS-SSO-Profiles.md)** - Centralized AWS SSO authentication workflow for secure access across multiple environments
+
 ### Setup Scripts
 - [x] **[initial-bcgov-setup.sh](.github/scripts/initial-aws-setup.sh)** - BC Government AWS account initial setup script for IAM roles, policies, S3 state bucket, and ECR repository
 
+### Terraform Modules
 ### Terraform Modules
 #### Core Infrastructure
 - [x] **[common](terraform/modules/common/)** - Shared variables, locals, and standardized naming conventions across modules
